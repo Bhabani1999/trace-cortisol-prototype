@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Trace · Your cortisol report</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="scores.css">
+  <link rel="stylesheet" href="rhythm-curve.css">
+  <link rel="stylesheet" href="characteristics-embedded.css">
+  <link rel="stylesheet" href="welcome.css">
+  <script src="model.js" defer></script>
+  <script src="characteristics-copy.js" defer></script>
+  <script src="reference-ranges.js" defer></script>
+  <script src="illustration-treatment.js" defer></script>
+  <script src="evening-level-clean.js" defer></script>
+  <script src="total-auc-art.js" defer></script>
+  <script src="morning-activation-art.js" defer></script>
+  <script src="diurnal-decline-art.js" defer></script>
+  <script src="evening-fraction-lamp.js" defer></script>
+  <script src="characteristics.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="prototype-tools"><span>Mobile prototype</span><button type="button" id="preview-characteristics">Characteristics</button><button type="button" id="edit-data">Edit sample</button></div>
+  <main class="report" id="report" data-screen="welcome">
+    <div class="progress" aria-label="Report progress"><span></span><span></span><span></span><span></span><span></span></div>
+    <header class="report-header"><button class="back" type="button" id="back" aria-label="Go to previous screen" hidden><span class="back-icon" aria-hidden="true">chevron_left</span></button><span class="wordmark">trace</span></header>
+
+    <section class="screen" id="welcome-screen" aria-labelledby="welcome-title">
+      <div class="welcome-art" aria-hidden="true"><img src="assets/welcome/results-packet.png?v=hero-3" width="960" height="1200" alt="" decoding="async"></div>
+      <div class="welcome-copy">
+        <div class="welcome-wordmark" aria-label="Trace">trace</div>
+        <h1 id="welcome-title">Welcome back<br><span id="person-name">Alex</span>,</h1>
+        <p class="intro">Trace Department of Internal Affairs has reviewed your results. Here is what your body has to say.</p>
+        <button class="primary welcome-open" type="button" id="open-report" aria-label="Open your cortisol results">Open</button>
+      </div>
+    </section>
+
+    <section class="screen" id="curve-screen" aria-labelledby="curve-title" hidden>
+      <h1 id="curve-title">Your cortisol<br>rhythm.</h1>
+      <p class="curve-intro">Three readings, from waking to evening.</p>
+      <figure class="rhythm-curve-card" aria-labelledby="curve-title">
+        <div class="curve-space"><svg id="curve-chart" class="curve-chart" role="img" aria-label="Your three cortisol readings"></svg></div>
+        <figcaption class="curve-footer"><span class="curve-range-key"><i aria-hidden="true"></i>Reference range</span><span class="curve-unit">ng/mg creatinine</span></figcaption>
+      </figure>
+      <div class="screen-action"><button type="button" class="primary" id="show-scores">Show my scores</button></div>
+    </section>
+
+    <section class="screen score-screen" id="rhythm-screen" aria-labelledby="rhythm-title" hidden>
+      <h1 id="rhythm-title" class="score-title">Rhythm score</h1>
+      <p class="score-explanation-copy score-intro">Your rhythm score shows the contrast between your morning and evening cortisol. A higher score means a stronger fall towards bedtime.</p>
+      <div class="score-hero" id="rhythm-meter" role="meter" aria-label="Rhythm score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+        <img class="score-glow" src="assets/scores/rhythm-glow.png?v=palette-5" width="800" height="800" alt="" aria-hidden="true">
+        <div class="score-number" id="rhythm-value">100</div>
+        <svg class="meter-art" viewBox="0 0 360 360" aria-hidden="true">
+          <defs><linearGradient id="rhythm-marker-colour" x1="-17" y1="0" x2="17" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#89bdc2" stop-opacity=".35"/><stop offset=".3" stop-color="#2b6071"/><stop offset=".7" stop-color="#2b6071"/><stop offset="1" stop-color="#89bdc2" stop-opacity=".35"/></linearGradient></defs>
+          <path class="meter-guide" d="M 34 180 A 146 146 0 0 1 326 180"/>
+
+          <g class="meter-fill" id="rhythm-meter-fill"></g>
+
+          <g class="meter-marker" id="rhythm-meter-marker" transform="translate(308 180) rotate(0)"><line stroke="url(#rhythm-marker-colour)" class="meter-marker-bloom" x1="-17" y1="0" x2="17" y2="0"/><line stroke="url(#rhythm-marker-colour)" x1="-17" y1="0" x2="17" y2="0"/></g>
+
+        </svg>
+      </div>
+      <div class="score-explanation">
+        <blockquote id="rhythm-remark"></blockquote>
+      </div>
+      <div class="screen-action"><button type="button" class="primary" id="show-stress">Show my stress score</button></div>
+    </section>
+
+    <section class="screen score-screen" id="stress-screen" aria-labelledby="stress-title" hidden>
+      <h1 id="stress-title" class="score-title">Stress score</h1>
+      <p class="score-explanation-copy score-intro">Your stress score compares evening cortisol with your morning reading and factors in your overnight level. Lower scores mean less evening carry-over within this calculation.</p>
+      <div class="score-hero" id="stress-meter" role="meter" aria-label="Stress score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25">
+        <img class="score-glow" src="assets/scores/stress-glow.png?v=palette-5" width="800" height="800" alt="" aria-hidden="true">
+        <div class="score-number" id="stress-value">25</div>
+        <svg class="meter-art" viewBox="0 0 360 360" aria-hidden="true">
+          <defs><linearGradient id="stress-marker-colour" x1="-17" y1="0" x2="17" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#d59fb9" stop-opacity=".35"/><stop offset=".3" stop-color="#834a78"/><stop offset=".7" stop-color="#834a78"/><stop offset="1" stop-color="#d59fb9" stop-opacity=".35"/></linearGradient></defs>
+          <path class="meter-guide" d="M 34 180 A 146 146 0 0 1 326 180"/>
+
+          <g class="meter-fill" id="stress-meter-fill"></g>
+
+          <g class="meter-marker" id="stress-meter-marker" transform="translate(89.490 89.490) rotate(-135)"><line stroke="url(#stress-marker-colour)" class="meter-marker-bloom" x1="-17" y1="0" x2="17" y2="0"/><line stroke="url(#stress-marker-colour)" x1="-17" y1="0" x2="17" y2="0"/></g>
+
+        </svg>
+      </div>
+      <div class="score-explanation">
+        <blockquote id="stress-remark"></blockquote>
+      </div>
+      <div class="screen-action"><button type="button" class="primary" id="show-characteristics">Show my characteristics</button></div>
+    </section>
+
+    <section class="screen" id="characteristics-screen" aria-labelledby="characteristics-title" hidden>
+      <h1 id="characteristics-title">Little details behind your rhythm</h1>
+      <div id="characteristic-cards" aria-live="polite"></div>
+      <div class="screen-action"><button class="primary" type="button" id="start-again">Start again</button></div>
+    </section>
+  </main>
+
+  <dialog id="data-dialog" aria-labelledby="data-title">
+    <form id="data-form" novalidate>
+      <div class="dialog-header"><h2 id="data-title">Sample readings</h2><button type="button" id="close-dialog" aria-label="Close sample editor">×</button></div>
+      <p class="editor-note">Edit the example to check the reveal and calculations. Values are cortisol / creatinine in ng/mg.</p>
+      <div class="editor-fields">
+        <label class="full">Name<input name="name" id="input-name" maxlength="80" required value="Alex"></label>
+        <label class="full">Sample collection date<input name="date" id="input-date" type="date" required value="2026-10-13"></label>
+        <label>Waking<input name="w" id="input-w" type="number" inputmode="decimal" min="0" max="1000000" step="any" required value="20"></label>
+        <label>Waking + 2<input name="w2" id="input-w2" type="number" inputmode="decimal" min="0" max="1000000" step="any" required value="40"></label>
+        <label>Evening<input name="e" id="input-e" type="number" inputmode="decimal" min="0" max="1000000" step="any" required value="10"></label>
+        <label class="full">Evening · hours after waking<input name="eveningHours" id="input-hours" type="number" inputmode="decimal" min="2" max="36" step="any" required value="14"></label>
+      </div>
+      <fieldset class="presets"><legend>Example curve patterns</legend><button type="button" data-preset="soft">Lower / low</button><button type="button" data-preset="day">Higher / low</button><button type="button" data-preset="after">Lower / elevated</button><button type="button" data-preset="high">Higher / elevated</button></fieldset>
+      <p id="editor-error" class="error" role="alert" hidden></p>
+      <details class="technical-note characteristics-preview">
+        <summary>Characteristics preview</summary>
+        <p>These cards use independent illustrative readings and reference ranges. Editing the sample updates the curve and scores; participant calculations for the characteristics are pending.</p>
+        <label for="preview-state">Example states</label>
+        <select id="preview-state">
+          <option value="mixed">Mixed examples</option>
+          <option value="close">At reference</option>
+          <option value="above">Above reference</option>
+          <option value="below">Below reference</option>
+        </select>
+      </details>
+      <details class="technical-note"><summary>Prototype calculation notes</summary><p>Rhythm = 50 × log₂(W+2 ÷ E), capped to 0–100.</p><p>Stress = 100 × (E ÷ W+2) × max(1, W ÷ W+2), capped to 0–100.</p><p>Numbers are rounded to whole points; the meter follows the unrounded value. Archetype remarks use a temporary reference: W 28, W+2 55, E 6. These are draft study scores, not validated clinical health or stress ratings.</p><p>The editor keeps data only in this page’s memory. Lab-PDF import, export and hosted links will be added later.</p></details>
+      <button type="submit" class="primary editor-apply">Apply readings</button>
+    </form>
+  </dialog>
+</body>
+</html>

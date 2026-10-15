@@ -1,0 +1,40 @@
+@import url('illustration-treatment.css');
+@import url('time-icons.css');
+@font-face{font-family:Material Symbols Outlined;src:url('fonts/MaterialSymbolsOutlined-Bedtime.ttf') format('truetype');font-weight:300;font-style:normal;font-display:swap}
+
+/* Card styling is scoped so the welcome, curve, scores and editor keep their layout. */
+#characteristics-screen{--ink:#302333;--muted:#7c707d;--line:#e9e1dc;color:var(--ink);font-size:15px;line-height:1.6;animation:none}
+#characteristics-screen>h1{font-size:32px;margin:14px 0 36px}
+#characteristics-screen .characteristic{padding:0;margin:0 0 60px;border:0}
+#characteristics-screen .characteristic:first-child{padding-top:0;border-top:0}
+#characteristics-screen h2{font-size:24.8px;line-height:1.16;letter-spacing:-.045em;margin:0 0 14px}
+#characteristics-screen .description{font-size:15px;line-height:1.7;color:#756778;margin:0 0 18px}
+#characteristics-screen .characteristic-result-card{--result-inset:20px;background:#fff;border:1px solid #ebe7e580;border-radius:22px;padding:16px var(--result-inset) 23px;box-shadow:0 1px 3px #30233303,0 6px 18px #30233307}
+#characteristics-screen .art-stage{position:relative;isolation:isolate;padding:0;background:#fff;overflow:visible}
+#characteristics-screen .art-stage svg{display:block;width:100%;height:auto;aspect-ratio:360/420}
+#characteristics-screen .art-stage.total-auc,#characteristics-screen .art-stage.morning-activation,#characteristics-screen .art-stage.evening-fraction{padding-top:16px}
+#characteristics-screen .art-stage.evening-level{padding:13px 0 6px}
+#characteristics-screen .art-stage.evening-level svg{aspect-ratio:360/282}
+#characteristics-screen .art-stage text{font-family:Plex Sans,sans-serif;font-size:10px;fill:#7a627f}
+#characteristics-screen .auc-art{position:relative;width:100%;aspect-ratio:360/420}
+#characteristics-screen .auc-layer{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+#characteristics-screen .reading-row{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:14px;margin:0}
+#characteristics-screen .reading-value{font-family:Plex Serif,serif;font-size:46px;line-height:1;letter-spacing:-.05em;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 9px;min-width:0}
+#characteristics-screen .reading-unit{font-family:Plex Sans,sans-serif;font-size:11px;letter-spacing:0;line-height:1.4;max-width:105px;color:#827383}
+#characteristics-screen .reference-value{text-align:right;font-size:16px;color:#59475f;line-height:1.4;white-space:nowrap}
+#characteristics-screen .reference-value span{display:block}
+#characteristics-screen .reference-value span:first-child{font-size:10px;color:#827383;margin-bottom:5px}
+#characteristics-screen .reference-value .reference-caption{font-family:Plex Mono,monospace;font-weight:500;text-transform:uppercase;letter-spacing:.075em;line-height:1.5;margin-top:0}
+/* Simple divider between artwork and interpretation. */
+#characteristics-screen .meaning{position:relative;margin:8px calc(-1 * var(--result-inset)) 0;padding:20px var(--result-inset) 0;border-top:0}
+#characteristics-screen .meaning .caption{font-size:10px;margin:0 0 12px;color:#78647c}
+#characteristics-screen .meaning p:not(.caption){margin:0;font-size:15px;line-height:1.7;color:#59475f}
+#characteristics-screen .meaning p.insight{margin-top:17px;font-family:Plex Serif,serif;font-size:21px;line-height:1.4;letter-spacing:-.025em;color:#7d5384}
+#characteristics-screen .closing-note{border-top:1px solid var(--line);padding:25px 0 0}
+#characteristics-screen .closing-note p{font-size:12px;line-height:1.75;color:#8a798c;margin:0}
+.characteristics-preview label{display:block;margin:12px 0 6px}
+.characteristics-preview select{font:inherit;width:100%;padding:10px 12px;border:1px solid #e2d6e3;border-radius:8px;background:#fff;color:#58465f}
+.characteristics-preview select:focus-visible{outline:2px solid #8c6dae;outline-offset:4px}
+@media(max-width:480px){#characteristics-screen .description,#characteristics-screen .meaning p:not(.caption){font-size:14px}#characteristics-screen .reading-value{font-size:43px}#characteristics-screen .meaning p.insight{font-size:20px}}
+@media(max-width:350px){#characteristics-screen>h1{font-size:28px}#characteristics-screen h2{font-size:22.4px}#characteristics-screen .characteristic-result-card{--result-inset:16px;padding:13px var(--result-inset) 20px;border-radius:20px}#characteristics-screen .reading-value{font-size:39px;gap:7px}#characteristics-screen .reading-unit{font-size:10px;max-width:74px}#characteristics-screen .reference-value{font-size:14px}}
+@media print{#characteristics-screen .characteristic{break-inside:avoid}#characteristics-screen .characteristic-result-card{box-shadow:none;border:1px solid #e9e1dc}}
