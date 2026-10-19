@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Trace · Your cortisol report</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="scores.css">
+  <link rel="stylesheet" href="rhythm-curve.css">
+  <link rel="stylesheet" href="characteristics-embedded.css">
+  <link rel="stylesheet" href="welcome.css">
+  <style>
+    /* Info (i) button on characteristic titles */
+    #characteristics-screen .info-title{position:relative;display:flex;align-items:center;gap:10px;margin:0 0 18px}
+    #characteristics-screen .info-title h2{margin:0}
+    #characteristics-screen .info-btn{position:relative;flex:none;width:22px;height:22px;padding:0;border-radius:50%;border:1px solid #cfc0d2;background:#fff;color:#7d5384;font:italic 400 14px/1 Plex Serif,serif;cursor:pointer;display:grid;place-items:center;-webkit-tap-highlight-color:transparent;transition:background .15s,border-color .15s}
+    #characteristics-screen .info-btn::after{content:"";position:absolute;inset:-11px}
+    #characteristics-screen .info-btn[aria-expanded="true"],#characteristics-screen .info-btn:hover{background:#f3ecf5;border-color:#b79cc0}
+    #characteristics-screen .info-btn:focus-visible{outline:2px solid #8c6dae;outline-offset:3px}
+    #characteristics-screen .info-pop{position:absolute;z-index:20;left:0;right:0;top:calc(100% + 8px);padding:14px 16px;background:#fff;border:1px solid #ebe7e5;border-radius:16px;box-shadow:0 2px 6px #30233308,0 12px 32px #3023331a;font:400 14px/1.65 Plex Sans,sans-serif;letter-spacing:0;color:#59475f;opacity:0;transform:translateY(-4px);visibility:hidden;pointer-events:none;transition:opacity .15s,transform .15s,visibility .15s}
+    #characteristics-screen .info-title.open .info-pop{opacity:1;transform:none;visibility:visible;pointer-events:auto}
+    @media (prefers-reduced-motion:reduce){#characteristics-screen .info-pop{transition:none}}
+  </style>
+  <style>.prototype-tools{display:none}</style>
+  <style>#curve-screen .curve-intro{max-width:none}</style>
+  <script src="model.js" defer></script>
+  <script>
+    /* ALL EDITABLE COPY LIVES HERE (index-copy.html only).
+       Screen titles/subtitles are written directly in the HTML below. */
+    window.TraceCopy = {
+      // Quote shown under each score, by curve pattern
+      remarks: {
+  "soft": {
+    "rhythm": "Professionally Unbothered",
+    "stress": "Zen Mode!!!"
+  },
+  "day": {
+    "rhythm": "I deliver and I disappear.",
+    "stress": "Saved the day. Muted the group chat."
+  },
+  "after": {
+    "rhythm": "You call it bedtime. I call it studio hours.",
+    "stress": "Your bedtime. My prime time."
+  },
+  "high": {
+    "rhythm": "All-day ambition.",
+    "stress": "You have boundaries. I have a shareholder crisis."
+  }
+},
+      // Characteristics cards
+      characteristics: [
+  {
+    "id": "evening-level",
+    "states": {
+      "close": {
+        "copy": "Your evening level is right about where it should be. You’re ready to slow down and call it a night."
+      },
+      "above": {
+        "copy": "Your evening level is high. You might be in bed but your mind is still going."
+      },
+      "below": {
+        "copy": "Your evening level is below reference. This could fit a quiet evening feeling, when switching off comes without much ceremony.",
+        "insight": "The Dude would approve."
+      }
+    },
+    "title": "Evening level",
+    "description": "Your evening cortisol reading offers a clue to how you wind down for sleep. It’s the night-mode part of your rhythm."
+  },
+  {
+    "id": "total-auc",
+    "states": {
+      "close": {
+        "copy": "Your cortisol release sits in the reference zone. This could fit feeling steadily engaged as you go about your routine.",
+        "insight": "The same total can come from very different morning and evening curves."
+      },
+      "above": {
+        "copy": "Your total cortisol is higher than the reference (Aura --). You may recognise a sustained switched-on feeling, as though the background volume is turned up.",
+        "insight": "Your aura arrived with an entourage."
+      },
+      "below": {
+        "copy": "Your total cortisol is lesser than the reference (Aura --). This could mean a gentler pace, and feeling less switched on through midday."
+      }
+    },
+    "title": "Total cortisol exposure (AUC)",
+    "description": "Your estimated cortisol exposure across your waking hours. We picture it as an aura that gives context to how switched on you may feel."
+  },
+  {
+    "id": "morning-activation",
+    "states": {
+      "close": {
+        "copy": "Your morning spike is where it should be. Hormones are giving your body a good wake-up call."
+      },
+      "above": {
+        "copy": "Your morning rise is larger than the reference. This could fit feeling hyped and ready to get into the day.",
+        "insight": "Leslie Knope energy. The agenda has an agenda."
+      },
+      "below": {
+        "copy": "Your morning change is smaller than the reference. This could fit a subtle shift in how ready you feel as your morning unfolds."
+      }
+    },
+    "title": "Morning activation",
+    "description": "How your cortisol changes a few hours after waking, relative to your starting level. It offers a clue to how you get into gear."
+  },
+  {
+    "id": "diurnal-decline",
+    "states": {
+      "close": {
+        "copy": "Your decline follows the reference pace. This could fit gradually easing out of that switched-on feeling."
+      },
+      "above": {
+        "copy": "Your cortisol falls faster than the reference. You may recognise a noticeable release of that keyed-up feeling as you wind down.",
+        "insight": "A fast decline can still end above the evening reference."
+      },
+      "below": {
+        "copy": "Your cortisol falls more slowly than the reference. Your body is taking a while to decompress (as your evening values are also high)."
+      }
+    },
+    "title": "Diurnal decline",
+    "description": "How quickly your cortisol falls from a few hours after waking to evening. It’s the pace of turning the volume down as you move towards downtime."
+  },
+  {
+    "id": "evening-fraction",
+    "states": {
+      "close": {
+        "copy": "Your evening-to-average ratio is near reference. This could fit feeling the day’s intensity step back as evening arrives."
+      },
+      "above": {
+        "copy": "Your evening reading remains relatively prominent. You may recognise the feeling of carrying unfinished stress burden into your downtime."
+      },
+      "below": {
+        "copy": "Your evening reading is relatively subdued. This could fit feeling able to leave things behind when you stop. The day has left the group chat.",
+        "insight": "Your unofficial title: Director of Logging Off."
+      }
+    },
+    "title": "Evening fraction",
+    "description": "Your evening cortisol compared with the average of your three readings. It offers a clue to how much of the switched-on feeling might follow you into downtime."
+  }
+]
+    };
+    window.TraceCharacteristicsCopy = window.TraceCopy.characteristics;
+  </script>
+  <script type="module">
+    /* Swap the model's built-in remarks for the ones above (no change to model.js). */
+    const base = window.TraceReportModel;
+    window.TraceReportModel = Object.freeze({
+      ...base,
+      remarks: window.TraceCopy.remarks,
+      calculate: input => { const r = base.calculate(input); return { ...r, remarks: window.TraceCopy.remarks[r.archetype] }; }
+    });
+  </script>
+  <script src="reference-ranges.js" defer></script>
+  <script src="illustration-treatment.js" defer></script>
+  <script src="evening-level-clean.js" defer></script>
+  <script src="total-auc-art.js" defer></script>
+  <script src="morning-activation-art.js" defer></script>
+  <script src="diurnal-decline-art.js" defer></script>
+  <script src="evening-fraction-lamp.js" defer></script>
+  <script src="characteristics.js" defer></script>
+  <script src="app-anshika.js" defer></script>
+  <script type="module">
+    /* Adds an (i) button to every characteristic card. Tap/click toggles the definition;
+       on mouse devices it also opens on hover. Tap elsewhere or press Esc to close.
+       The definition text comes from the "description" field in TraceCopy above. */
+    const TARGETS = window.TraceCopy.characteristics.map(c => c.id);
+    const cards = document.getElementById('characteristic-cards');
+    const closeAll = except => cards.querySelectorAll('.info-title.open').forEach(w => { if (w !== except) setOpen(w, false); });
+    function setOpen(wrap, open) {
+      wrap.classList.toggle('open', open);
+      wrap.querySelector('.info-btn').setAttribute('aria-expanded', String(open));
+    }
+    function enhance() {
+      TARGETS.forEach(id => {
+        const section = document.getElementById(id);
+        if (!section || section.querySelector('.info-title')) return;
+        const item = window.TraceCopy.characteristics.find(c => c.id === id);
+        const title = section.querySelector('h2'), desc = section.querySelector('.description');
+        if (!item || !title || !desc) return;
+        const wrap = document.createElement('div'); wrap.className = 'info-title';
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'info-btn'; btn.textContent = 'i';
+        btn.setAttribute('aria-label', 'What is ' + item.title.toLowerCase() + '?');
+        btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-controls', id + '-info');
+        const pop = document.createElement('div');
+        pop.className = 'info-pop'; pop.id = id + '-info'; pop.setAttribute('role', 'note'); pop.textContent = item.description;
+        title.replaceWith(wrap); wrap.append(title, btn, pop);
+        desc.remove();
+        btn.addEventListener('click', e => { e.stopPropagation(); const next = !wrap.classList.contains('open'); closeAll(wrap); setOpen(wrap, next); });
+        if (matchMedia('(hover:hover)').matches) {
+          wrap.addEventListener('mouseenter', () => { closeAll(wrap); setOpen(wrap, true); });
+          wrap.addEventListener('mouseleave', () => { if (document.activeElement !== btn) setOpen(wrap, false); });
+        }
+      });
+    }
+    document.addEventListener('click', e => { if (!e.target.closest('.info-title')) closeAll(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+    new MutationObserver(enhance).observe(cards, { childList: true });
+    enhance();
+  </script>
+</head>
+<body>
+  <div class="prototype-tools"><span>Mobile prototype</span><button type="button" id="preview-characteristics">Characteristics</button><button type="button" id="edit-data">Edit sample</button></div>
+  <main class="report" id="report" data-screen="welcome">
+    <div class="progress" aria-label="Report progress"><span></span><span></span><span></span><span></span><span></span></div>
+    <header class="report-header"><button class="back" type="button" id="back" aria-label="Go to previous screen" hidden><span class="back-icon" aria-hidden="true">chevron_left</span></button><span class="wordmark">trace</span></header>
+
+    <section class="screen" id="welcome-screen" aria-labelledby="welcome-title">
+      <div class="welcome-art" aria-hidden="true"><img src="assets/welcome/results-packet.png?v=hero-3" width="960" height="1200" alt="" decoding="async"></div>
+      <div class="welcome-copy">
+        <div class="welcome-wordmark" aria-label="Trace">trace</div>
+        <h1 id="welcome-title">Welcome<br><span id="person-name">Alex</span>,</h1>
+        <p class="intro">Trace Department of Internal Affairs has assessed your body’s stress levels. We have some inner circle information.</p>
+        <button class="primary welcome-open" type="button" id="open-report" aria-label="Open your cortisol results">Open</button>
+      </div>
+    </section>
+
+    <section class="screen" id="curve-screen" aria-labelledby="curve-title" hidden>
+      <h1 id="curve-title">Your cortisol<br>rhythm.</h1>
+      <p class="curve-intro">Here’s how your cortisol rose and fell today.</p>
+      <figure class="rhythm-curve-card" aria-labelledby="curve-title">
+        <div class="curve-space"><svg id="curve-chart" class="curve-chart" role="img" aria-label="Your three cortisol readings"></svg></div>
+        <figcaption class="curve-footer"><span class="curve-range-key"><i aria-hidden="true"></i>Reference range</span></figcaption>
+      </figure>
+      <div class="screen-action"><button type="button" class="primary" id="show-scores">Show my scores</button></div>
+    </section>
+
+    <section class="screen score-screen" id="rhythm-screen" aria-labelledby="rhythm-title" hidden>
+      <h1 id="rhythm-title" class="score-title">Rhythm score</h1>
+      <p class="score-explanation-copy score-intro">Cortisol naturally rises in the morning and falls in the evening. Your rhythm is exactly how it should be.</p>
+      <div class="score-hero" id="rhythm-meter" role="meter" aria-label="Rhythm score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+        <img class="score-glow" src="assets/scores/rhythm-glow.png?v=palette-5" width="800" height="800" alt="" aria-hidden="true">
+        <div class="score-number" id="rhythm-value">100</div>
+        <svg class="meter-art" viewBox="0 0 360 360" aria-hidden="true">
+          <defs><linearGradient id="rhythm-marker-colour" x1="-17" y1="0" x2="17" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#89bdc2" stop-opacity=".35"/><stop offset=".3" stop-color="#2b6071"/><stop offset=".7" stop-color="#2b6071"/><stop offset="1" stop-color="#89bdc2" stop-opacity=".35"/></linearGradient></defs>
+          <path class="meter-guide" d="M 34 180 A 146 146 0 0 1 326 180"/>
+
+          <g class="meter-fill" id="rhythm-meter-fill"></g>
+
+          <g class="meter-marker" id="rhythm-meter-marker" transform="translate(308 180) rotate(0)"><line stroke="url(#rhythm-marker-colour)" class="meter-marker-bloom" x1="-17" y1="0" x2="17" y2="0"/><line stroke="url(#rhythm-marker-colour)" x1="-17" y1="0" x2="17" y2="0"/></g>
+
+        </svg>
+      </div>
+      <div class="score-explanation">
+        <blockquote id="rhythm-remark"></blockquote>
+      </div>
+      <div class="screen-action"><button type="button" class="primary" id="show-stress">Show my stress score</button></div>
+    </section>
+
+    <section class="screen score-screen" id="stress-screen" aria-labelledby="stress-title" hidden>
+      <h1 id="stress-title" class="score-title">Stress score</h1>
+      <p class="score-explanation-copy score-intro">Your stress score tells how much cortisol you’re carrying into the evening and overnight.  Your score is low. This is the best feeling for your body (and your biology).</p>
+      <div class="score-hero" id="stress-meter" role="meter" aria-label="Stress score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25">
+        <img class="score-glow" src="assets/scores/stress-glow.png?v=palette-5" width="800" height="800" alt="" aria-hidden="true">
+        <div class="score-number" id="stress-value">25</div>
+        <svg class="meter-art" viewBox="0 0 360 360" aria-hidden="true">
+          <defs><linearGradient id="stress-marker-colour" x1="-17" y1="0" x2="17" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#d59fb9" stop-opacity=".35"/><stop offset=".3" stop-color="#834a78"/><stop offset=".7" stop-color="#834a78"/><stop offset="1" stop-color="#d59fb9" stop-opacity=".35"/></linearGradient></defs>
+          <path class="meter-guide" d="M 34 180 A 146 146 0 0 1 326 180"/>
+
+          <g class="meter-fill" id="stress-meter-fill"></g>
+
+          <g class="meter-marker" id="stress-meter-marker" transform="translate(89.490 89.490) rotate(-135)"><line stroke="url(#stress-marker-colour)" class="meter-marker-bloom" x1="-17" y1="0" x2="17" y2="0"/><line stroke="url(#stress-marker-colour)" x1="-17" y1="0" x2="17" y2="0"/></g>
+
+        </svg>
+      </div>
+      <div class="score-explanation">
+        <blockquote id="stress-remark"></blockquote>
+      </div>
+      <div class="screen-action"><button type="button" class="primary" id="show-characteristics">Show my characteristics</button></div>
+    </section>
+
+    <section class="screen" id="characteristics-screen" aria-labelledby="characteristics-title" hidden>
+      <h1 id="characteristics-title">Little details behind your rhythm</h1>
+      <div id="characteristic-cards" aria-live="polite"></div>
+      <div class="screen-action"><button class="primary" type="button" id="start-again">Start again</button></div>
+    </section>
+  </main>
+
+  <dialog id="data-dialog" aria-labelledby="data-title">
+    <form id="data-form" novalidate>
+      <div class="dialog-header"><h2 id="data-title">Sample readings</h2><button type="button" id="close-dialog" aria-label="Close sample editor">×</button></div>
+      <p class="editor-note">Edit the example to check the reveal and calculations. Values are cortisol / creatinine in ng/mg.</p>
+      <div class="editor-fields">
+        <label class="full">Name<input name="name" id="input-name" maxlength="80" required value="Alex"></label>
+        <label class="full">Sample collection date<input name="date" id="input-date" type="date" required value="2026-10-13"></label>
+        <label>Waking<input name="w" id="input-w" type="number" inputmode="decimal" min="0" max="1000000" step="any" required value="20"></label>
+        <label>Waking + 2<input name="w2" id="input-w2" type="number" inputmode="decimal" min="0" max="1000000" step="any" required value="40"></label>
+        <label>Evening<input name="e" id="input-e" type="number" inputmode="decimal" min="0" max="1000000" step="any" required value="10"></label>
+        <label class="full">Evening · hours after waking<input name="eveningHours" id="input-hours" type="number" inputmode="decimal" min="2" max="36" step="any" required value="14"></label>
+      </div>
+      <fieldset class="presets"><legend>Example curve patterns</legend><button type="button" data-preset="soft">Lower / low</button><button type="button" data-preset="day">Higher / low</button><button type="button" data-preset="after">Lower / elevated</button><button type="button" data-preset="high">Higher / elevated</button></fieldset>
+      <p id="editor-error" class="error" role="alert" hidden></p>
+      <details class="technical-note characteristics-preview">
+        <summary>Characteristics preview</summary>
+        <p>These cards use independent illustrative readings and reference ranges. Editing the sample updates the curve and scores; participant calculations for the characteristics are pending.</p>
+        <label for="preview-state">Example states</label>
+        <select id="preview-state">
+          <option value="mixed">Mixed examples</option>
+          <option value="close">At reference</option>
+          <option value="above">Above reference</option>
+          <option value="below">Below reference</option>
+        </select>
+      </details>
+      <details class="technical-note"><summary>Prototype calculation notes</summary><p>Rhythm = 50 × log₂(W+2 ÷ E), capped to 0–100.</p><p>Stress = 100 × (E ÷ W+2) × max(1, W ÷ W+2), capped to 0–100.</p><p>Numbers are rounded to whole points; the meter follows the unrounded value. Archetype remarks use a temporary reference: W 28, W+2 55, E 6. These are draft study scores, not validated clinical health or stress ratings.</p><p>The editor keeps data only in this page’s memory. Lab-PDF import, export and hosted links will be added later.</p></details>
+      <button type="submit" class="primary editor-apply">Apply readings</button>
+    </form>
+  </dialog>
+</body>
+</html>
